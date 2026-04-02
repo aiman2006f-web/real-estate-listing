@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Studio | Homeverse Lane</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="admin-page-shell">
+    <section class="admin-section standalone-admin">
+      <div class="section-header admin-header">
+        <div>
+          <p class="section-tag">Admin Studio</p>
+          <h2>Retrieve And Store Marketplace Data</h2>
+        </div>
+        <div class="admin-page-actions">
+          <button class="primary-btn" type="button" id="refresh-admin">Refresh data</button>
+          <button class="text-btn" type="button" id="logout-admin">Logout</button>
+        </div>
+      </div>
+
+      <div class="admin-metrics" id="admin-metrics"></div>
+
+      <div class="admin-layout">
+        <article class="admin-card">
+          <h3>Add or update property</h3>
+          <form class="admin-form" id="admin-form">
+            <input type="hidden" name="id">
+            <input name="title" type="text" placeholder="Property title" required>
+            <input name="location" type="text" placeholder="Location" required>
+            <select name="category" required>
+              <option value="House">House</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Villa">Villa</option>
+              <option value="Commercial">Commercial</option>
+            </select>
+            <select name="listingType" required>
+              <option value="sale">For sale</option>
+              <option value="rent">For rent</option>
+            </select>
+            <input name="price" type="number" min="0" placeholder="Price" required>
+            <input name="bedrooms" type="number" min="0" placeholder="Bedrooms" required>
+            <input name="bathrooms" type="number" min="0" step="0.5" placeholder="Bathrooms" required>
+            <input name="areaSqft" type="number" min="0" placeholder="Area sqft" required>
+            <input name="imageUrl" type="url" placeholder="Cover image URL" required>
+            <input name="agentName" type="text" placeholder="Agent name" required>
+            <input name="agentEmail" type="email" placeholder="Agent email" required>
+            <input name="amenities" type="text" placeholder="Amenities comma separated">
+            <input name="gallery" type="text" placeholder="Gallery image URLs comma separated">
+            <input name="summary" type="text" placeholder="Short summary" required>
+            <textarea name="description" rows="4" placeholder="Property description" required></textarea>
+            <div class="status-row">
+              <select name="status">
+                <option value="available">Available</option>
+                <option value="reserved">Reserved</option>
+                <option value="sold">Sold</option>
+                <option value="rented">Rented</option>
+              </select>
+              <label class="featured-toggle">
+                <input name="featured" type="checkbox">
+                <span>Featured listing</span>
+              </label>
+            </div>
+            <div class="admin-actions">
+              <button class="primary-btn" type="submit">Save property</button>
+              <button class="text-btn" id="reset-admin-form" type="button">Reset</button>
+            </div>
+            <p class="feedback-text" id="admin-feedback" aria-live="polite"></p>
+          </form>
+        </article>
+
+        <article class="admin-card">
+          <h3>Recent inquiries</h3>
+          <div class="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Property</th>
+                  <th>Intent</th>
+                  <th>Budget</th>
+                </tr>
+              </thead>
+              <tbody id="inquiry-table-body"></tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+
+      <article class="admin-card admin-table-card">
+        <div class="table-head">
+          <h3>Manage properties</h3>
+          <p>Edit or remove stored listings directly from the database-backed catalog.</p>
+        </div>
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Location</th>
+                <th>Type</th>
+                <th>Listing</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-property-table"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+  <script src="./admin.js"></script>
+</body>
+</html>

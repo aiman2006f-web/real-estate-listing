@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Homeverse Lane</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-card">
+      <p class="section-tag">Protected Access</p>
+      <h1>Admin Studio Login</h1>
+      <p>Only authenticated admins can manage listings and inquiries.</p>
+      <form id="admin-login-form" class="auth-form">
+        <input name="username" type="text" placeholder="Username" required>
+        <input name="password" type="password" placeholder="Password" required>
+        <button class="primary-btn" type="submit">Login</button>
+        <p class="feedback-text" id="login-feedback" aria-live="polite"></p>
+      </form>
+      <p class="auth-help">Default demo credentials: <strong>admin</strong> / <strong>homeverse123</strong></p>
+      <a class="text-btn" href="/">Back to website</a>
+    </section>
+  </main>
+  <script src="./admin-login.js"></script>
+</body>
+</html>
