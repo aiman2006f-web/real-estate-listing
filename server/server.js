@@ -5,7 +5,12 @@ const Database = require("better-sqlite3");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const dbPath = process.env.DB_PATH || path.join(__dirname, "..", "data", "real-estate.db");
+const railwayVolumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
+const dbPath =
+  process.env.DB_PATH ||
+  (railwayVolumePath
+    ? path.join(railwayVolumePath, "real-estate.db")
+    : path.join(__dirname, "..", "data", "real-estate.db"));
 const db = new Database(dbPath);
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "homeverse123";

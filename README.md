@@ -55,6 +55,27 @@ The schema is created automatically in `server/server.js` on startup. A matching
 3. Open:
    `http://localhost:3000`
 
+## Deploy on Railway
+
+This app is ready to deploy on Railway with persistent storage for SQLite.
+
+Recommended steps:
+
+1. Create a new Railway project from this GitHub repo.
+2. Add a `Volume` to the service.
+3. Mount the volume to `/data`.
+4. Set these environment variables:
+   - `ADMIN_USERNAME`
+   - `ADMIN_PASSWORD`
+   - `SESSION_SECRET`
+   - `DB_PATH=/data/real-estate.db`
+5. Deploy and open the generated Railway URL.
+
+Why Railway:
+
+- Railway supports persistent volumes for apps that need local file storage.
+- This app uses SQLite, so it needs the database file to survive redeploys.
+
 ## Deploy on Render
 
 This app is ready for Render deployment with persistent SQLite storage via [`render.yaml`](./render.yaml).
