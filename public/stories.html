@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Stories | Nestora</title>
+  <meta name="description" content="Read customer reviews and experiences from Nestora clients.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body data-page="stories">
+  <div class="page-wrap">
+    <header class="subpage-hero stories-hero">
+      <div class="hero-frame">
+        <nav class="top-nav top-nav-sticky top-nav-dark">
+          <a class="brand-mark" href="/#home">
+            <span class="brand-emblem" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <span>Nestora</span>
+          </a>
+          <div class="nav-links">
+            <a href="/#home">Home</a>
+            <a href="/properties.html?listingType=rent">Rent</a>
+            <a href="/properties.html?listingType=sale">Sell</a>
+            <a href="/properties.html">Buy</a>
+            <a href="/stories.html" class="active">Stories</a>
+          </div>
+          <div class="nav-actions">
+            <a class="nav-login nav-link-button" href="/#home">Login</a>
+            <a class="nav-cta nav-link-button" href="/properties.html">Get Started</a>
+          </div>
+          <button class="mobile-nav-toggle" id="mobile-nav-toggle" type="button" aria-label="Toggle navigation">Menu</button>
+        </nav>
+
+        <section class="subpage-copy">
+          <p class="eyebrow">Rated By Clients</p>
+          <h1>Real client stories<br>from successful moves.</h1>
+          <p>
+            Reviews, ratings, and lived-in feedback from buyers and renters.
+            Honest experiences make the platform feel more trusted.
+          </p>
+        </section>
+      </div>
+    </header>
+
+    <main class="content-shell">
+      <section class="stories-page-section">
+        <div class="stories-page-header">
+          <div>
+            <p class="eyebrow">Community Trust</p>
+            <h2>What people are saying about their Nestora experience</h2>
+          </div>
+          <div class="review-stat-chip">
+            <strong>4.9/5</strong>
+            <span>Average verified rating</span>
+          </div>
+        </div>
+
+        <div class="stories-page-grid" id="stories-page-grid"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div>
+          <a class="brand-mark footer-brand" href="/#home">
+            <span class="brand-emblem" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <span>Nestora</span>
+          </a>
+          <p>Trusted by buyers, renters, and sellers who wanted a more polished way to move.</p>
+        </div>
+        <div>
+          <h3>Explore</h3>
+          <a href="/#home">Home</a>
+          <a href="/properties.html">All properties</a>
+          <a href="/stories.html">All stories</a>
+        </div>
+        <div>
+          <h3>Support</h3>
+          <a href="/properties.html?listingType=sale">Buy homes</a>
+        </div>
+        <div>
+          <h3>Get in touch</h3>
+          <p>hello@nestora.com</p>
+          <p>4140 Parker Rd. Allentown, New Mexico 31134</p>
+        </div>
+      </div>
+      <p class="footer-bottom">Copyright 2026 Nestora</p>
+    </footer>
+  </div>
+
+  <template id="story-card-template">
+    <article class="story-detail-card">
+      <div class="story-detail-media">
+        <img class="story-image" alt="">
+        <div class="story-detail-avatar-wrap">
+          <img class="story-avatar" alt="">
+        </div>
+      </div>
+      <div class="story-detail-copy">
+        <div class="story-detail-head">
+          <div>
+            <h3 class="story-name"></h3>
+            <p class="story-role"></p>
+          </div>
+          <span class="story-rating-badge"></span>
+        </div>
+        <div class="story-review-row">
+          <span class="stars"></span>
+          <span class="story-rating"></span>
+        </div>
+        <p class="story-quote"></p>
+        <p class="story-property"></p>
+      </div>
+    </article>
+  </template>
+
+  <script src="./app.js"></script>
+</body>
+</html>

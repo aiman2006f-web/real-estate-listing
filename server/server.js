@@ -292,7 +292,7 @@ app.get(/.*/, (_req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Habitat Lane running at http://localhost:${PORT}`);
+  console.log(`Nestora running at http://localhost:${PORT}`);
 });
 
 function initializeDatabase() {
@@ -340,7 +340,7 @@ function initializeDatabase() {
 function seedProperties() {
   db.prepare("DELETE FROM properties WHERE title = ?").run("Lakeview Dream Villa");
 
-  const properties = [
+  const baseProperties = [
     {
       title: "Westbury Family Residence",
       location: "Belmont Gardens, Chicago",
@@ -687,6 +687,91 @@ function seedProperties() {
       status: "available"
     }
   ];
+
+  const generatedBlueprints = [
+    ["Canyon Pearl Villa", "Scottsdale, Arizona", "Villa", "sale"],
+    ["Willow Crest House", "Portland, Oregon", "House", "sale"],
+    ["Marina Point Residences", "Miami, Florida", "Apartment", "rent"],
+    ["Elm District Lofts", "Denver, Colorado", "Apartment", "sale"],
+    ["Regent Corner Suites", "Boston, Massachusetts", "Commercial", "rent"],
+    ["Oakline Family House", "Nashville, Tennessee", "House", "sale"],
+    ["Sapphire Coast Villa", "Malibu, California", "Villa", "sale"],
+    ["Juniper Row Apartment", "Jersey City, New Jersey", "Apartment", "rent"],
+    ["Crescent Park Residence", "Charlotte, North Carolina", "House", "sale"],
+    ["Vantage Harbor Offices", "San Francisco, California", "Commercial", "rent"],
+    ["Stonewell Manor", "Savannah, Georgia", "House", "sale"],
+    ["Luna Grove Flats", "Toronto, Ontario", "Apartment", "rent"],
+    ["Brighton Hill House", "Austin, Texas", "House", "sale"],
+    ["Riverside Echo Loft", "Philadelphia, Pennsylvania", "Apartment", "sale"],
+    ["Opal Garden Estate", "Palm Springs, California", "Villa", "sale"],
+    ["Kingsley Terrace Home", "Dallas, Texas", "House", "rent"],
+    ["Park Avenue Elite", "New York, New York", "Apartment", "rent"],
+    ["Cedar Vale Residence", "Boise, Idaho", "House", "sale"],
+    ["Summit Glass Villa", "Boulder, Colorado", "Villa", "sale"],
+    ["Lakeshore Horizon Flats", "Chicago, Illinois", "Apartment", "rent"],
+    ["Guildford Commerce Hub", "Atlanta, Georgia", "Commercial", "rent"],
+    ["Harbor Stone House", "San Diego, California", "House", "sale"],
+    ["Belmont Sky Residence", "Seattle, Washington", "Apartment", "sale"],
+    ["Ivory Ridge Estate", "Beverly Hills, California", "Villa", "sale"],
+    ["Maple Crown Townhome", "Columbus, Ohio", "House", "rent"]
+  ];
+
+  const imagePool = [
+    "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600566753052-3f0b5f4c4c7b?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600607687644-c7171b42498f?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600047509358-9dc75507daeb?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1200&q=80"
+  ];
+
+  const amenitiesPool = [
+    ["Private Pool", "Smart Home", "Garage", "Garden Lounge"],
+    ["City View", "Concierge", "Gym", "Storage"],
+    ["Meeting Rooms", "Reception", "Fiber Internet", "Parking"],
+    ["Fireplace", "Patio", "Security", "Home Office"],
+    ["Rooftop Deck", "Pool", "Pet Friendly", "Wellness Club"]
+  ];
+
+  const generatedProperties = generatedBlueprints.map(([title, location, category, listingType], index) => {
+    const imageUrl = imagePool[index % imagePool.length];
+    const gallery = [
+      imagePool[index % imagePool.length],
+      imagePool[(index + 1) % imagePool.length],
+      imagePool[(index + 2) % imagePool.length]
+    ];
+    const bedrooms = category === "Commercial" ? 0 : 2 + (index % 4);
+    const bathrooms = category === "Commercial" ? 2 + (index % 2) : 2 + ((index + 1) % 3) * 0.5;
+    const areaSqft = 1280 + index * 95;
+    const price =
+      listingType === "rent"
+        ? 2800 + index * 220
+        : 385000 + index * 37000;
+
+    return {
+      title,
+      location,
+      category,
+      listingType,
+      price,
+      bedrooms,
+      bathrooms,
+      areaSqft,
+      imageUrl,
+      gallery,
+      summary: `${title} brings together polished design, strong neighborhood appeal, and a catalog-friendly layout for premium browsing.`,
+      description: `${title} was added to deepen the Nestora collection with more premium inventory, stronger geographic variety, and a more complete portfolio experience for buyers, renters, and investors.`,
+      amenities: amenitiesPool[index % amenitiesPool.length],
+      agentName: ["Amelia Stone", "Lucas Reed", "Mila Carter", "Evan Brooks", "Sofia Grant"][index % 5],
+      agentEmail: `advisor${index + 1}@nestora.com`,
+      featured: index < 10,
+      status: "available"
+    };
+  });
+
+  const properties = [...baseProperties, ...generatedProperties];
 
   const insert = db.prepare(
     `INSERT INTO properties (
