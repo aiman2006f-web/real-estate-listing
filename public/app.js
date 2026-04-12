@@ -587,15 +587,13 @@ function openPropertyDialog(property) {
   }
 
   state.activeProperty = property;
-  const gallery = property.gallery.length ? property.gallery : [property.imageUrl];
 
   elements.dialogContent.innerHTML = `
     <div class="dialog-layout">
       <div class="dialog-gallery">
-        <img class="dialog-gallery-main" src="${property.imageUrl}" alt="${property.title}">
-        <div class="dialog-gallery-strip">
-          ${gallery.slice(0, 3).map(image => `<img src="${image}" alt="${property.title} gallery view">`).join("")}
-        </div>
+        <figure class="dialog-gallery-panel is-primary">
+          <img class="dialog-gallery-main" src="${property.imageUrl}" alt="${property.title}">
+        </figure>
       </div>
       <div class="dialog-copy">
         <p class="section-tag">${property.category} | ${property.listingType === "sale" ? "For Sale" : "For Rent"}</p>
@@ -630,7 +628,7 @@ function openPropertyDialog(property) {
     </div>
   `;
 
-  applyFallbackToAll(elements.dialogContent.querySelectorAll(".dialog-gallery-main, .dialog-gallery-strip img"), DEFAULT_PROPERTY_IMAGE);
+  applyFallbackToAll(elements.dialogContent.querySelectorAll(".dialog-gallery-main"), DEFAULT_PROPERTY_IMAGE);
   elements.dialogContent.querySelector("#inquiry-form").addEventListener("submit", submitInquiry);
   elements.dialog.showModal();
 }

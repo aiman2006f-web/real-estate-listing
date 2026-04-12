@@ -354,7 +354,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Beautiful huge family house in a heartful neighborhood with landscaped frontage.",
       description: "A bright suburban home inspired by the reference layout, with airy interiors, a renewed facade, landscaped frontage, and move-in-ready family spaces.",
@@ -377,7 +378,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Newly renovated apartment with skyline light and warm wood details.",
       description: "This rental apartment offers a polished urban experience with wide windows, curated finishes, and a layout tuned for young professionals or couples.",
@@ -400,7 +402,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Commercial workspace for a modern business team with reception and flexible desks.",
       description: "A refined office studio suitable for agencies, startups, and boutique consultancies that want a central address and polished client-facing environment.",
@@ -423,7 +426,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Interior-forward family home with layered textures and cozy entertaining areas.",
       description: "An inviting home with multiple living zones, a dining-oriented heart, and a refined neutral palette for buyers who want comfort and presentation.",
@@ -446,7 +450,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Sleek city apartment with a skyline profile and amenity-rich tower access.",
       description: "Created for renters who want strong views and a professional lifestyle, this apartment blends convenience, premium finishes, and a central location.",
@@ -469,7 +474,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1600210492486-724fe5c67fb3?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1600607687644-a3bfcd646154?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1600607687644-a3bfcd646154?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Contemporary villa with private pool, glass living hall, and premium family suites.",
       description: "A high-end villa for buyers looking for resort-style luxury, expansive interiors, and strong neighborhood prestige.",
@@ -492,7 +498,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Warm and family-ready townhome with bright windows and quiet tree-lined access.",
       description: "Built for renters who want neighborhood charm with modern comfort, this townhome offers practical space, balanced light, and dependable value.",
@@ -515,7 +522,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Design-led ocean-adjacent loft with clean lines and expressive open-plan living.",
       description: "A bright apartment with a polished California feel, ideal for buyers who care about style, location, and a flexible modern footprint.",
@@ -538,7 +546,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1605146769289-440113cc3d00?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Large estate home with family zoning, stone detailing, and generous exterior frontage.",
       description: "This listing adds a broader international location mix to the site while giving the catalog a premium family-home option with strong curb appeal.",
@@ -561,7 +570,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Character-rich brick manor with heritage detailing and beautifully updated interiors.",
       description: "Added to broaden the catalog with a more classic architectural style that complements the newer modern homes on the site.",
@@ -584,7 +594,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Premium office suites overlooking the bay with polished meeting and reception areas.",
       description: "This commercial addition gives the site more business-oriented inventory and improves the overall variety of searchable properties.",
@@ -607,7 +618,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "A cozy beige-toned cottage with stone accents, garden edges, and warm family interiors.",
       description: "This listing adds another reference-style residential option with softer architectural character and a strong warm-home feel.",
@@ -630,7 +642,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Bright modern family residence with airy windows, neutral textures, and clean curb appeal.",
       description: "Added as another catalog expansion so the property grid feels fuller and visually consistent with the reference layout.",
@@ -653,7 +666,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "Elegant apartment living with garden-facing light and refined city finishes.",
       description: "A polished London rental for users who want a premium urban address, warm interiors, and a quieter residential setting.",
@@ -676,7 +690,8 @@ function seedProperties() {
       gallery: [
         "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1200&q=80",
         "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1200&q=80"
+        "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
       ],
       summary: "A warm desert-side estate with natural light, broad frontage, and family-friendly planning.",
       description: "Added to broaden the location mix with another strong-looking residential listing that fits the homepage card style well.",
@@ -716,7 +731,20 @@ function seedProperties() {
     ["Maple Crown Townhome", "Columbus, Ohio", "House", "rent"]
   ];
 
-  const imagePool = [
+  const uniquePropertyImages = [
+    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1605146769289-440113cc3d00?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1200&q=80",
     "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80",
     "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
     "https://images.unsplash.com/photo-1600566753052-3f0b5f4c4c7b?auto=format&fit=crop&w=1200&q=80",
@@ -724,7 +752,26 @@ function seedProperties() {
     "https://images.unsplash.com/photo-1600047509358-9dc75507daeb?auto=format&fit=crop&w=1200&q=80",
     "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1200&q=80",
     "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1200&q=80"
+    "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600210492486-724fe5c67fb3?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600607687644-a3bfcd646154?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80&sat=-20",
+    "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&sat=-10",
+    "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80&sat=-12",
+    "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1200&q=80&sat=-15",
+    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80&sat=-18",
+    "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1200&q=80&sat=-8",
+    "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80&sat=-16"
   ];
 
   const amenitiesPool = [
@@ -736,12 +783,8 @@ function seedProperties() {
   ];
 
   const generatedProperties = generatedBlueprints.map(([title, location, category, listingType], index) => {
-    const imageUrl = imagePool[index % imagePool.length];
-    const gallery = [
-      imagePool[index % imagePool.length],
-      imagePool[(index + 1) % imagePool.length],
-      imagePool[(index + 2) % imagePool.length]
-    ];
+    const imageUrl = uniquePropertyImages[baseProperties.length + index];
+    const gallery = [imageUrl];
     const bedrooms = category === "Commercial" ? 0 : 2 + (index % 4);
     const bathrooms = category === "Commercial" ? 2 + (index % 2) : 2 + ((index + 1) % 3) * 0.5;
     const areaSqft = 1280 + index * 95;
@@ -771,7 +814,11 @@ function seedProperties() {
     };
   });
 
-  const properties = [...baseProperties, ...generatedProperties];
+  const properties = [...baseProperties, ...generatedProperties].map((property, index) => ({
+    ...property,
+    imageUrl: uniquePropertyImages[index] || property.imageUrl,
+    gallery: [uniquePropertyImages[index] || property.imageUrl]
+  }));
 
   const insert = db.prepare(
     `INSERT INTO properties (
