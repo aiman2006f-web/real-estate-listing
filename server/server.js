@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 const session = require("express-session");
 const Database = require("better-sqlite3");
+const { Pool } = require("pg");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,7 +12,14 @@ const dbPath =
   (railwayVolumePath
     ? path.join(railwayVolumePath, "real-estate.db")
     : path.join(__dirname, "..", "data", "real-estate.db"));
-const db = new Database(dbPath);
+const isPostgres = Boolean(process.env.DATABASE_URL);
+const db = isPostgres ? null : new Database(dbPath);
+const pgPool = isPostgres
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false
+    })
+  : null;
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "homeverse123";
 
@@ -31,8 +39,6 @@ app.use(
   })
 );
 app.use(express.static(path.join(__dirname, "..", "public")));
-
-initializeDatabase();
 
 app.get("/healthz", (_req, res) => {
   res.status(200).json({ ok: true });
@@ -65,23 +71,24 @@ app.get("/studio", requireAdminPageAuth, (_req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "admin.html"));
 });
 
-app.get("/api/properties", (req, res) => {
+app.get("/api/properties", asyncHandler(async (req, res) => {
   const filters = req.query;
-  const { whereSql, params } = buildPropertyFilters(filters);
+  const { whereSql, params } = buildPropertyFilters(filters, { postgres: isPostgres });
   const sql = `
     SELECT *
     FROM properties
     ${whereSql}
     ORDER BY featured DESC, created_at DESC
   `;
-  const properties = db.prepare(sql).all(...params).map(normalizeProperty);
+  const properties = (await queryAll(sql, params)).map(normalizeProperty);
   res.json(properties);
-});
+}));
 
-app.get("/api/properties/:id", (req, res) => {
-  const property = db
-    .prepare("SELECT * FROM properties WHERE id = ?")
-    .get(req.params.id);
+app.get("/api/properties/:id", asyncHandler(async (req, res) => {
+  const property = await queryOne(
+    `SELECT * FROM properties WHERE id = ${placeholder(1)}`,
+    [Number(req.params.id)]
+  );
 
   if (!property) {
     res.status(404).json({ error: "Property not found" });
@@ -89,9 +96,9 @@ app.get("/api/properties/:id", (req, res) => {
   }
 
   res.json(normalizeProperty(property));
-});
+}));
 
-app.post("/api/properties", (req, res) => {
+app.post("/api/properties", asyncHandler(async (req, res) => {
   if (!isAdminAuthenticated(req)) {
     res.status(401).json({ error: "Authentication required" });
     return;
@@ -104,97 +111,46 @@ app.post("/api/properties", (req, res) => {
     return;
   }
 
-  const result = db
-    .prepare(
-      `INSERT INTO properties (
-        title, location, category, listing_type, price, bedrooms, bathrooms, area_sqft, image_url,
-        gallery_json, summary, description, amenities_json, agent_name, agent_email, featured, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    )
-    .run(
-      payload.title,
-      payload.location,
-      payload.category,
-      payload.listingType,
-      payload.price,
-      payload.bedrooms,
-      payload.bathrooms,
-      payload.areaSqft,
-      payload.imageUrl,
-      JSON.stringify(payload.gallery),
-      payload.summary,
-      payload.description,
-      JSON.stringify(payload.amenities),
-      payload.agentName,
-      payload.agentEmail,
-      payload.featured ? 1 : 0,
-      payload.status
-    );
-
-  const property = db.prepare("SELECT * FROM properties WHERE id = ?").get(result.lastInsertRowid);
+  const property = await createProperty(payload);
   res.status(201).json(normalizeProperty(property));
-});
+}));
 
-app.put("/api/properties/:id", (req, res) => {
+app.put("/api/properties/:id", asyncHandler(async (req, res) => {
   if (!isAdminAuthenticated(req)) {
     res.status(401).json({ error: "Authentication required" });
     return;
   }
 
-  const existing = db.prepare("SELECT * FROM properties WHERE id = ?").get(req.params.id);
+  const existing = await queryOne(
+    `SELECT * FROM properties WHERE id = ${placeholder(1)}`,
+    [Number(req.params.id)]
+  );
   if (!existing) {
     res.status(404).json({ error: "Property not found" });
     return;
   }
 
   const merged = sanitizePropertyPayload({ ...normalizeProperty(existing), ...req.body });
-  db.prepare(
-    `UPDATE properties
-     SET title = ?, location = ?, category = ?, listing_type = ?, price = ?, bedrooms = ?, bathrooms = ?,
-         area_sqft = ?, image_url = ?, gallery_json = ?, summary = ?, description = ?, amenities_json = ?,
-         agent_name = ?, agent_email = ?, featured = ?, status = ?, updated_at = CURRENT_TIMESTAMP
-     WHERE id = ?`
-  ).run(
-    merged.title,
-    merged.location,
-    merged.category,
-    merged.listingType,
-    merged.price,
-    merged.bedrooms,
-    merged.bathrooms,
-    merged.areaSqft,
-    merged.imageUrl,
-    JSON.stringify(merged.gallery),
-    merged.summary,
-    merged.description,
-    JSON.stringify(merged.amenities),
-    merged.agentName,
-    merged.agentEmail,
-    merged.featured ? 1 : 0,
-    merged.status,
-    req.params.id
-  );
-
-  const property = db.prepare("SELECT * FROM properties WHERE id = ?").get(req.params.id);
+  const property = await updateProperty(Number(req.params.id), merged);
   res.json(normalizeProperty(property));
-});
+}));
 
-app.delete("/api/properties/:id", (req, res) => {
+app.delete("/api/properties/:id", asyncHandler(async (req, res) => {
   if (!isAdminAuthenticated(req)) {
     res.status(401).json({ error: "Authentication required" });
     return;
   }
 
-  const result = db.prepare("DELETE FROM properties WHERE id = ?").run(req.params.id);
-  if (!result.changes) {
+  const deleted = await deleteProperty(Number(req.params.id));
+  if (!deleted) {
     res.status(404).json({ error: "Property not found" });
     return;
   }
 
   res.status(204).send();
-});
+}));
 
-app.post("/api/inquiries", (req, res) => {
+app.post("/api/inquiries", asyncHandler(async (req, res) => {
   const inquiry = sanitizeInquiryPayload(req.body);
 
   if (!inquiry.propertyId || !inquiry.name || !inquiry.email || !inquiry.intent) {
@@ -202,16 +158,260 @@ app.post("/api/inquiries", (req, res) => {
     return;
   }
 
-  const property = db.prepare("SELECT id FROM properties WHERE id = ?").get(inquiry.propertyId);
+  const property = await queryOne(
+    `SELECT id FROM properties WHERE id = ${placeholder(1)}`,
+    [inquiry.propertyId]
+  );
   if (!property) {
     res.status(404).json({ error: "Property not found" });
     return;
   }
 
-  const result = db.prepare(
-    `INSERT INTO inquiries (property_id, name, email, phone, intent, message, budget)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`
-  ).run(
+  const savedInquiry = await createInquiry(inquiry);
+  res.status(201).json(savedInquiry);
+}));
+
+app.get("/api/admin/summary", asyncHandler(async (req, res) => {
+  if (!isAdminAuthenticated(req)) {
+    res.status(401).json({ error: "Authentication required" });
+    return;
+  }
+
+  const featuredLiteral = isPostgres ? "TRUE" : "1";
+  const summary = {
+    totalProperties: Number((await queryOne("SELECT COUNT(*) AS count FROM properties")).count),
+    totalSales: Number((await queryOne("SELECT COUNT(*) AS count FROM properties WHERE listing_type = 'sale'")).count),
+    totalRentals: Number((await queryOne("SELECT COUNT(*) AS count FROM properties WHERE listing_type = 'rent'")).count),
+    featuredCount: Number((await queryOne(`SELECT COUNT(*) AS count FROM properties WHERE featured = ${featuredLiteral}`)).count),
+    totalInquiries: Number((await queryOne("SELECT COUNT(*) AS count FROM inquiries")).count),
+    recentInquiries: await queryAll(
+      `SELECT inquiries.*, properties.title AS property_title
+       FROM inquiries
+       JOIN properties ON properties.id = inquiries.property_id
+       ORDER BY inquiries.created_at DESC
+       LIMIT 8`
+    )
+  };
+
+  res.json(summary);
+}));
+
+app.get("/api/admin/properties", asyncHandler(async (req, res) => {
+  if (!isAdminAuthenticated(req)) {
+    res.status(401).json({ error: "Authentication required" });
+    return;
+  }
+
+  const properties = (await queryAll("SELECT * FROM properties ORDER BY updated_at DESC, created_at DESC")).map(normalizeProperty);
+  res.json(properties);
+}));
+
+app.get("/api/admin/inquiries", asyncHandler(async (req, res) => {
+  if (!isAdminAuthenticated(req)) {
+    res.status(401).json({ error: "Authentication required" });
+    return;
+  }
+
+  const inquiries = await queryAll(
+    `SELECT inquiries.*, properties.title AS property_title, properties.location AS property_location
+     FROM inquiries
+     JOIN properties ON properties.id = inquiries.property_id
+     ORDER BY inquiries.created_at DESC`
+  );
+  res.json(inquiries);
+}));
+
+app.get(/.*/, (_req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+});
+
+startServer();
+
+async function startServer() {
+  await initializeDatabase();
+  app.listen(PORT, () => {
+    console.log(`Nestora running at http://localhost:${PORT}`);
+  });
+}
+
+async function initializeDatabase() {
+  if (isPostgres) {
+    await pgPool.query(`
+      CREATE TABLE IF NOT EXISTS properties (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL UNIQUE,
+        location TEXT NOT NULL,
+        category TEXT NOT NULL,
+        listing_type TEXT NOT NULL CHECK(listing_type IN ('sale', 'rent')),
+        price INTEGER NOT NULL,
+        bedrooms INTEGER NOT NULL DEFAULT 0,
+        bathrooms DOUBLE PRECISION NOT NULL DEFAULT 0,
+        area_sqft INTEGER NOT NULL DEFAULT 0,
+        image_url TEXT NOT NULL,
+        gallery_json TEXT NOT NULL DEFAULT '[]',
+        summary TEXT NOT NULL DEFAULT '',
+        description TEXT NOT NULL DEFAULT '',
+        amenities_json TEXT NOT NULL DEFAULT '[]',
+        agent_name TEXT NOT NULL DEFAULT '',
+        agent_email TEXT NOT NULL DEFAULT '',
+        featured BOOLEAN NOT NULL DEFAULT FALSE,
+        status TEXT NOT NULL DEFAULT 'available',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS inquiries (
+        id SERIAL PRIMARY KEY,
+        property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT NOT NULL DEFAULT '',
+        intent TEXT NOT NULL,
+        message TEXT NOT NULL DEFAULT '',
+        budget TEXT NOT NULL DEFAULT '',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+  } else {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS properties (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        location TEXT NOT NULL,
+        category TEXT NOT NULL,
+        listing_type TEXT NOT NULL CHECK(listing_type IN ('sale', 'rent')),
+        price INTEGER NOT NULL,
+        bedrooms INTEGER NOT NULL DEFAULT 0,
+        bathrooms REAL NOT NULL DEFAULT 0,
+        area_sqft INTEGER NOT NULL DEFAULT 0,
+        image_url TEXT NOT NULL,
+        gallery_json TEXT NOT NULL DEFAULT '[]',
+        summary TEXT NOT NULL DEFAULT '',
+        description TEXT NOT NULL DEFAULT '',
+        amenities_json TEXT NOT NULL DEFAULT '[]',
+        agent_name TEXT NOT NULL DEFAULT '',
+        agent_email TEXT NOT NULL DEFAULT '',
+        featured INTEGER NOT NULL DEFAULT 0,
+        status TEXT NOT NULL DEFAULT 'available',
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS inquiries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        property_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT NOT NULL DEFAULT '',
+        intent TEXT NOT NULL,
+        message TEXT NOT NULL DEFAULT '',
+        budget TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE
+      );
+    `);
+  }
+
+  await seedProperties();
+}
+
+function asyncHandler(handler) {
+  return (req, res) => {
+    Promise.resolve(handler(req, res)).catch(error => {
+      console.error(error);
+      res.status(500).json({ error: "Something went wrong" });
+    });
+  };
+}
+
+function placeholder(index) {
+  return isPostgres ? `$${index}` : "?";
+}
+
+async function queryAll(sql, params = []) {
+  if (isPostgres) {
+    const { rows } = await pgPool.query(sql, params);
+    return rows;
+  }
+
+  return db.prepare(sql).all(...params);
+}
+
+async function queryOne(sql, params = []) {
+  if (isPostgres) {
+    const { rows } = await pgPool.query(sql, params);
+    return rows[0];
+  }
+
+  return db.prepare(sql).get(...params);
+}
+
+async function execute(sql, params = []) {
+  if (isPostgres) {
+    return pgPool.query(sql, params);
+  }
+
+  return db.prepare(sql).run(...params);
+}
+
+async function createProperty(payload) {
+  const params = propertyParams(payload);
+  const insertSql = isPostgres
+    ? `INSERT INTO properties (
+        title, location, category, listing_type, price, bedrooms, bathrooms, area_sqft, image_url,
+        gallery_json, summary, description, amenities_json, agent_name, agent_email, featured, status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      RETURNING *`
+    : `INSERT INTO properties (
+        title, location, category, listing_type, price, bedrooms, bathrooms, area_sqft, image_url,
+        gallery_json, summary, description, amenities_json, agent_name, agent_email, featured, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  if (isPostgres) {
+    const { rows } = await execute(insertSql, params);
+    return rows[0];
+  }
+
+  const result = await execute(insertSql, params);
+  return queryOne(`SELECT * FROM properties WHERE id = ${placeholder(1)}`, [result.lastInsertRowid]);
+}
+
+async function updateProperty(id, payload) {
+  const params = [...propertyParams(payload), id];
+  const updateSql = isPostgres
+    ? `UPDATE properties
+       SET title = $1, location = $2, category = $3, listing_type = $4, price = $5, bedrooms = $6, bathrooms = $7,
+           area_sqft = $8, image_url = $9, gallery_json = $10, summary = $11, description = $12, amenities_json = $13,
+           agent_name = $14, agent_email = $15, featured = $16, status = $17, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $18
+       RETURNING *`
+    : `UPDATE properties
+       SET title = ?, location = ?, category = ?, listing_type = ?, price = ?, bedrooms = ?, bathrooms = ?,
+           area_sqft = ?, image_url = ?, gallery_json = ?, summary = ?, description = ?, amenities_json = ?,
+           agent_name = ?, agent_email = ?, featured = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+       WHERE id = ?`;
+
+  if (isPostgres) {
+    const { rows } = await execute(updateSql, params);
+    return rows[0];
+  }
+
+  await execute(updateSql, params);
+  return queryOne(`SELECT * FROM properties WHERE id = ${placeholder(1)}`, [id]);
+}
+
+async function deleteProperty(id) {
+  if (isPostgres) {
+    const result = await execute(`DELETE FROM properties WHERE id = $1`, [id]);
+    return result.rowCount > 0;
+  }
+
+  const result = await execute(`DELETE FROM properties WHERE id = ?`, [id]);
+  return result.changes > 0;
+}
+
+async function createInquiry(inquiry) {
+  const params = [
     inquiry.propertyId,
     inquiry.name,
     inquiry.email,
@@ -219,126 +419,54 @@ app.post("/api/inquiries", (req, res) => {
     inquiry.intent,
     inquiry.message,
     inquiry.budget
+  ];
+
+  if (isPostgres) {
+    const { rows } = await execute(
+      `INSERT INTO inquiries (property_id, name, email, phone, intent, message, budget)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING *`,
+      params
+    );
+    return rows[0];
+  }
+
+  const result = await execute(
+    `INSERT INTO inquiries (property_id, name, email, phone, intent, message, budget)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    params
   );
-
-  const savedInquiry = db.prepare("SELECT * FROM inquiries WHERE id = ?").get(result.lastInsertRowid);
-  res.status(201).json(savedInquiry);
-});
-
-app.get("/api/admin/summary", (_req, res) => {
-  if (!isAdminAuthenticated(_req)) {
-    res.status(401).json({ error: "Authentication required" });
-    return;
-  }
-
-  const summary = {
-    totalProperties: db.prepare("SELECT COUNT(*) AS count FROM properties").get().count,
-    totalSales: db
-      .prepare("SELECT COUNT(*) AS count FROM properties WHERE listing_type = 'sale'")
-      .get().count,
-    totalRentals: db
-      .prepare("SELECT COUNT(*) AS count FROM properties WHERE listing_type = 'rent'")
-      .get().count,
-    featuredCount: db
-      .prepare("SELECT COUNT(*) AS count FROM properties WHERE featured = 1")
-      .get().count,
-    totalInquiries: db.prepare("SELECT COUNT(*) AS count FROM inquiries").get().count,
-    recentInquiries: db
-      .prepare(
-        `SELECT inquiries.*, properties.title AS property_title
-         FROM inquiries
-         JOIN properties ON properties.id = inquiries.property_id
-         ORDER BY inquiries.created_at DESC
-         LIMIT 8`
-      )
-      .all()
-  };
-
-  res.json(summary);
-});
-
-app.get("/api/admin/properties", (_req, res) => {
-  if (!isAdminAuthenticated(_req)) {
-    res.status(401).json({ error: "Authentication required" });
-    return;
-  }
-
-  const properties = db
-    .prepare("SELECT * FROM properties ORDER BY updated_at DESC, created_at DESC")
-    .all()
-    .map(normalizeProperty);
-  res.json(properties);
-});
-
-app.get("/api/admin/inquiries", (_req, res) => {
-  if (!isAdminAuthenticated(_req)) {
-    res.status(401).json({ error: "Authentication required" });
-    return;
-  }
-
-  const inquiries = db
-    .prepare(
-      `SELECT inquiries.*, properties.title AS property_title, properties.location AS property_location
-       FROM inquiries
-       JOIN properties ON properties.id = inquiries.property_id
-       ORDER BY inquiries.created_at DESC`
-    )
-    .all();
-  res.json(inquiries);
-});
-
-app.get(/.*/, (_req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
-});
-
-app.listen(PORT, () => {
-  console.log(`Nestora running at http://localhost:${PORT}`);
-});
-
-function initializeDatabase() {
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS properties (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      location TEXT NOT NULL,
-      category TEXT NOT NULL,
-      listing_type TEXT NOT NULL CHECK(listing_type IN ('sale', 'rent')),
-      price INTEGER NOT NULL,
-      bedrooms INTEGER NOT NULL DEFAULT 0,
-      bathrooms REAL NOT NULL DEFAULT 0,
-      area_sqft INTEGER NOT NULL DEFAULT 0,
-      image_url TEXT NOT NULL,
-      gallery_json TEXT NOT NULL DEFAULT '[]',
-      summary TEXT NOT NULL DEFAULT '',
-      description TEXT NOT NULL DEFAULT '',
-      amenities_json TEXT NOT NULL DEFAULT '[]',
-      agent_name TEXT NOT NULL DEFAULT '',
-      agent_email TEXT NOT NULL DEFAULT '',
-      featured INTEGER NOT NULL DEFAULT 0,
-      status TEXT NOT NULL DEFAULT 'available',
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS inquiries (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      property_id INTEGER NOT NULL,
-      name TEXT NOT NULL,
-      email TEXT NOT NULL,
-      phone TEXT NOT NULL DEFAULT '',
-      intent TEXT NOT NULL,
-      message TEXT NOT NULL DEFAULT '',
-      budget TEXT NOT NULL DEFAULT '',
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE
-    );
-  `);
-
-  seedProperties();
+  return queryOne(`SELECT * FROM inquiries WHERE id = ${placeholder(1)}`, [result.lastInsertRowid]);
 }
 
-function seedProperties() {
-  db.prepare("DELETE FROM properties WHERE title = ?").run("Lakeview Dream Villa");
+function propertyParams(payload) {
+  return [
+    payload.title,
+    payload.location,
+    payload.category,
+    payload.listingType,
+    payload.price,
+    payload.bedrooms,
+    payload.bathrooms,
+    payload.areaSqft,
+    payload.imageUrl,
+    JSON.stringify(payload.gallery),
+    payload.summary,
+    payload.description,
+    JSON.stringify(payload.amenities),
+    payload.agentName,
+    payload.agentEmail,
+    isPostgres ? payload.featured : payload.featured ? 1 : 0,
+    payload.status
+  ];
+}
+
+async function seedProperties() {
+  if (isPostgres) {
+    await execute("DELETE FROM properties WHERE title = $1", ["Lakeview Dream Villa"]);
+  } else {
+    db.prepare("DELETE FROM properties WHERE title = ?").run("Lakeview Dream Villa");
+  }
 
   const baseProperties = [
     {
@@ -820,6 +948,70 @@ function seedProperties() {
     gallery: [uniquePropertyImages[index] || property.imageUrl]
   }));
 
+  if (isPostgres) {
+    const client = await pgPool.connect();
+    try {
+      await client.query("BEGIN");
+      for (const row of properties) {
+        await client.query(
+          `INSERT INTO properties (
+            title, location, category, listing_type, price, bedrooms, bathrooms, area_sqft,
+            image_url, gallery_json, summary, description, amenities_json, agent_name,
+            agent_email, featured, status
+          ) VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8,
+            $9, $10, $11, $12, $13, $14,
+            $15, $16, $17
+          )
+          ON CONFLICT (title) DO UPDATE SET
+            location = EXCLUDED.location,
+            category = EXCLUDED.category,
+            listing_type = EXCLUDED.listing_type,
+            price = EXCLUDED.price,
+            bedrooms = EXCLUDED.bedrooms,
+            bathrooms = EXCLUDED.bathrooms,
+            area_sqft = EXCLUDED.area_sqft,
+            image_url = EXCLUDED.image_url,
+            gallery_json = EXCLUDED.gallery_json,
+            summary = EXCLUDED.summary,
+            description = EXCLUDED.description,
+            amenities_json = EXCLUDED.amenities_json,
+            agent_name = EXCLUDED.agent_name,
+            agent_email = EXCLUDED.agent_email,
+            featured = EXCLUDED.featured,
+            status = EXCLUDED.status,
+            updated_at = CURRENT_TIMESTAMP`,
+          [
+            row.title,
+            row.location,
+            row.category,
+            row.listingType,
+            row.price,
+            row.bedrooms,
+            row.bathrooms,
+            row.areaSqft,
+            row.imageUrl,
+            JSON.stringify(row.gallery),
+            row.summary,
+            row.description,
+            JSON.stringify(row.amenities),
+            row.agentName,
+            row.agentEmail,
+            row.featured,
+            row.status
+          ]
+        );
+      }
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+    return;
+  }
+
   const insert = db.prepare(
     `INSERT INTO properties (
       title, location, category, listing_type, price, bedrooms, bathrooms, area_sqft,
@@ -889,47 +1081,57 @@ function seedProperties() {
   transaction(properties);
 }
 
-function buildPropertyFilters(filters) {
+function buildPropertyFilters(filters, { postgres = false } = {}) {
   const clauses = [];
   const params = [];
+  let paramIndex = 1;
+  const nextPlaceholder = () => (postgres ? `$${paramIndex++}` : "?");
 
   if (filters.search) {
-    clauses.push("(title LIKE ? OR location LIKE ? OR summary LIKE ? OR description LIKE ?)");
+    const first = nextPlaceholder();
+    const second = nextPlaceholder();
+    const third = nextPlaceholder();
+    const fourth = nextPlaceholder();
+    clauses.push(`(title LIKE ${first} OR location LIKE ${second} OR summary LIKE ${third} OR description LIKE ${fourth})`);
     const pattern = `%${filters.search}%`;
     params.push(pattern, pattern, pattern, pattern);
   }
 
   if (filters.category) {
-    clauses.push("category = ?");
+    clauses.push(`category = ${nextPlaceholder()}`);
     params.push(filters.category);
   }
 
   if (filters.listingType) {
-    clauses.push("listing_type = ?");
+    clauses.push(`listing_type = ${nextPlaceholder()}`);
     params.push(filters.listingType);
   }
 
   if (filters.minPrice) {
-    clauses.push("price >= ?");
+    clauses.push(`price >= ${nextPlaceholder()}`);
     params.push(Number(filters.minPrice));
   }
 
   if (filters.maxPrice) {
-    clauses.push("price <= ?");
+    clauses.push(`price <= ${nextPlaceholder()}`);
     params.push(Number(filters.maxPrice));
   }
 
   if (filters.bedrooms) {
-    clauses.push("bedrooms >= ?");
+    clauses.push(`bedrooms >= ${nextPlaceholder()}`);
     params.push(Number(filters.bedrooms));
   }
 
   if (filters.featured === "true") {
-    clauses.push("featured = 1");
+    if (postgres) {
+      clauses.push("featured = TRUE");
+    } else {
+      clauses.push("featured = 1");
+    }
   }
 
   if (filters.status) {
-    clauses.push("status = ?");
+    clauses.push(`status = ${nextPlaceholder()}`);
     params.push(filters.status);
   }
 

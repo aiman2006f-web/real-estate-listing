@@ -1,23 +1,26 @@
 services:
+  - type: pserv
+    name: nestora-db
+    plan: free
+    databaseName: nestora
+    databaseUser: nestora
   - type: web
-    name: wealthhome-lane
+    name: nestora-estates
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /healthz
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DB_PATH
-        value: /var/data/real-estate.db
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nestora-db
+          property: connectionString
       - key: SESSION_SECRET
         generateValue: true
       - key: ADMIN_USERNAME
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
-    disk:
-      name: wealthhome-data
-      mountPath: /var/data
-      sizeGB: 1
