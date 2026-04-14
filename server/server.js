@@ -236,6 +236,7 @@ async function startServer() {
 
 async function initializeDatabase() {
   if (isPostgres) {
+    await waitForPostgres();
     await pgPool.query(`
       CREATE TABLE IF NOT EXISTS properties (
         id SERIAL PRIMARY KEY,
@@ -313,6 +314,25 @@ async function initializeDatabase() {
   }
 
   await seedProperties();
+}
+
+async function waitForPostgres(maxAttempts = 12, delayMs = 5000) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await pgPool.query("SELECT 1");
+      return;
+    } catch (error) {
+      lastError = error;
+      console.log(`Waiting for Postgres (${attempt}/${maxAttempts})...`);
+      if (attempt < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+    }
+  }
+
+  throw lastError;
 }
 
 function asyncHandler(handler) {
