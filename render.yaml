@@ -1,9 +1,9 @@
-services:
-  - type: pserv
-    name: nestora-db
+databases:
+  - name: nestora-db
     plan: free
     databaseName: nestora
-    databaseUser: nestora
+
+services:
   - type: web
     name: nestora-estates
     runtime: node
